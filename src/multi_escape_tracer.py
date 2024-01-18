@@ -1,0 +1,78 @@
+"""---
+
+---
+
+Example
+-------
+-----
+
+    $ python -----
+
+Notes
+-----
+    -------
+
+
+Arguments
+----------
+--- : str
+    -----.
+
+--- : float
+    ----
+    
+"""
+
+import sys
+import os
+from rich.progress import track
+
+from lib import parse
+from lib.escape_tracer import EscapeTracer
+from lib.settings import settings, dimensions
+
+def main():
+    
+    DATA_FOLDER = parse_args()
+    
+    folders = [os.path.join(DATA_FOLDER, folder) for folder in os.listdir(DATA_FOLDER) if os.path.isdir(os.path.join(DATA_FOLDER, folder))]
+    
+    for folder in track(folders, description="Analysing tracking data..."):
+        
+        processed_folder = os.path.join(folder, "processed")
+        
+        TRACKING_FILE, STIM_FILE = parse.get_file_names(processed_folder)
+        
+        et = EscapeTracer(TRACKING_FILE, settings, dimensions)
+        et.load_stim_file(STIM_FILE)
+        
+        et.calc_speeds()
+        et.global_displays()
+        et.event_displays()
+        et.output_report()
+
+def parse_args():
+
+    if len(sys.argv) == 1:
+        
+        raise KeyError("tracking, sound, and video files must be specified")
+    
+    elif len(sys.argv) == 2:
+        
+        folder = parse.folder(sys.argv[1])
+    
+    # elif len(sys.argv) == 4:
+        
+    #     tracking_file = parse.h5name(sys.argv[1])
+    #     sound_file = parse.csvname(sys.argv[2])
+    #     video_file = parse.videoname(sys.argv[3])
+            
+    else:
+        
+        raise KeyError("Too many input arguments")
+    
+    # return tracking_file, sound_file, video_file
+    return folder
+
+
+main()
