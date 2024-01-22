@@ -45,11 +45,12 @@ def main():
         
         et = EscapeTracer(TRACKING_FILE, video_settings, dimensions)
         et.load_stim_file(STIM_FILE)
-        
-        et.calc_speeds()
-        et.global_displays()
-        et.event_displays()
-        et.output_report()
+        et.load_background_image(video_settings["background_image"])
+        et.increase_fig_size()
+        et.draw_global_traces()
+        et.draw_event_traces() 
+        et.save_speeds()
+        et.save_pdf_report()
 
 def parse_args():
 

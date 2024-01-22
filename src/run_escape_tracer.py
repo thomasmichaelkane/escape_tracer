@@ -39,8 +39,8 @@ def main():
     et.load_stim_file(STIM_FILE)
     et.load_background_image(video_settings["background_image"])
     et.increase_fig_size()
-    et.draw_global_traces(show=True)
-    et.draw_event_traces(show=True)
+    et.draw_global_traces()
+    et.draw_event_traces() 
     et.save_speeds()
     et.save_pdf_report()
 
