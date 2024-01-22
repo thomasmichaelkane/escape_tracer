@@ -27,9 +27,9 @@ import sys
 import os
 from rich.progress import track
 
-from lib import parse
-from lib.escape_tracer import EscapeTracer
-from lib.settings import settings, dimensions
+from lib.utils import parse
+from lib.obj.escape_tracer import EscapeTracer
+from lib.settings.settings import video_settings, dimensions
 
 def main():
     
@@ -43,7 +43,7 @@ def main():
         
         TRACKING_FILE, STIM_FILE = parse.get_file_names(processed_folder)
         
-        et = EscapeTracer(TRACKING_FILE, settings, dimensions)
+        et = EscapeTracer(TRACKING_FILE, video_settings, dimensions)
         et.load_stim_file(STIM_FILE)
         
         et.calc_speeds()

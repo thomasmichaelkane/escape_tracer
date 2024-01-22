@@ -3,17 +3,19 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from . import display, sound, arena, analysing
-from .utils import *
+from ..processing import display, sound, arena, stats
+from ..utils.utils import *
 
 class EscapeTracer():
-    def __init__(self, tracking_file, settings, dimensions):
+    def __init__(self, tracking_file, video_settings, dimensions, save_figs=False):
         
-        for k, v in settings.items():
+        for k, v in video_settings.items():
             setattr(self, k, v)
      
         self.tracking_file = tracking_file
-        self.tracking_db = read_tracking_file(self.tracking_file)    
+        self.tracking_db = read_tracking_file(self.tracking_file)  
+        self.save_figs = save_figs 
+         
         # time and event attributes
         self.num_frames = self.tracking_db.shape[0]
         frame_time = (1./self.fps)
@@ -29,28 +31,8 @@ class EscapeTracer():
         self.detections = self.tracking['likelihood'].values > self.pcutoff
         self.tracking_detected = self.tracking[self.detections]
     
-        # create output folder
-        self.assign_analysis_folder()
-        self.results_folder = create_folder(self.analysis_folder, "et_output")
-        self.base_path = os.path.join(self.results_folder, self.base_name)
-        
-        # initialise figures list
-        self.figs = []
-        
-    def load_stim_file(self, stim_file):
-        
-        self.stim_file = stim_file
-        
-        # read sound data
-        if self.stim_file is not None:
-            self.sound_data, self.folder, self.base_name = sound.read_sound_file(self.stim_file, self.num_frames)
-            self.sound_event_frames = sound.get_sound_events(self.sound_data)
-            
-    def load_background_image(self, image_file):
-        
-        self.image_file = image_file
-
-    def assign_analysis_folder(self):
+        self.folder, self.file_name = os.path.split(self.tracking_file)
+        self.base_name = self.file_name.removesuffix('.h5')
     
         parent_folder = os.path.dirname(self.folder)
         self.analysis_folder = os.path.join(parent_folder, "analysis")
@@ -59,26 +41,65 @@ class EscapeTracer():
             os.mkdir(self.analysis_folder)
         except:
             pass
-    
+        
+        self.results_folder = create_folder(self.analysis_folder, "et_output")
+        self.base_path = os.path.join(self.results_folder, self.base_name)
+        
+        # initialise figures list
+        self.figs = []
+        
+        self.image_file = None
+        self.sound_data = None
+        
+        self.calc_speeds()
+        
+    def load_stim_file(self, stim_file):
+        
+        self.stim_file = stim_file
+        
+        # read sound data
+        if self.stim_file is not None:
+            self.sound_data = sound.read_sound_file(self.stim_file, self.num_frames)
+            self.sound_event_frames = sound.get_sound_events(self.sound_data)
+            
+    def load_background_image(self, image_file):
+        
+        self.image_file = image_file
+        
+    def increase_fig_size(self):
+        
+        plt.rcParams['figure.figsize'] = [14, 7]
+        plt.rcParams["figure.autolayout"] = True   
+        
     def calc_speeds(self):
         
-        self.speeds, self.locs = analysing.calculate_speeds(self.tracking, 
+        self.speeds, self.locs = stats.calculate_speeds(self.tracking, 
                                                   self.detections, 
                                                   self.num_frames, 
-                                                  self.fps, 
-                                                  self.base_path, 
+                                                  self.fps,
+                                                  self.speed_cutoff,
                                                   self.exit_roi)
 
-    def global_displays(self, show=False):
+    def save_speeds(self, suffix='_speeds'):
+        
+        speed_tracking = pd.DataFrame((self.speeds, self.locs))
+        speed_tracking.to_csv(self.base_path + suffix + '.csv')
+        
+        if self.stim_file is not None:
+            
+            for path, df in zip(self.event_base_paths, self.event_speed_dfs):
+                df.to_csv(path + suffix + '.csv')
+    
+    def draw_global_traces(self, show=False):
         
         # trip grid
-        display.trip_grid(self.tracking_detected)
-        trip_fig = plt.gcf()
-        self.figs.append(trip_fig)
+        self.trip_fig = display.trip_grid(self.tracking_detected, show=show)
+        self.figs.append(self.trip_fig)
+        plt.close()
         
-        # time plot
-        time_fig, ax = plt.subplots()
-        self.figs.append(time_fig)
+        # # time plot
+        self.time_fig, ax = plt.subplots()
+        self.figs.append(self.time_fig)
         plt.title('Activity over time')
         
         display.time_plot_on_image(ax, 
@@ -90,11 +111,11 @@ class EscapeTracer():
                                    show=show)
      
         # speed plot
-        speed_fig, speed_ax = plt.subplots()
-        self.figs.append(speed_fig)
+        self.speed_fig, speed_ax = plt.subplots()
+        self.figs.append(self.speed_fig)
         plt.title('Velocity')
         
-        display.two_plots(speed_fig, 
+        display.two_plots(self.speed_fig, 
                           speed_ax, 
                           self.time, 
                           self.speeds, 
@@ -104,12 +125,15 @@ class EscapeTracer():
                           data2_label='Sound (on/off)',
                           show=show)   
         
-    def event_displays(self, show=False):
+    def draw_event_traces(self, show=False):
         
         if self.stim_file is not None:
         
             all_event_speeds = []
             event_stats = []
+            
+            self.event_base_paths = []
+            self.event_speed_dfs = []
 
             for i, event_t0 in enumerate(self.sound_event_frames, 1):
                 
@@ -122,17 +146,23 @@ class EscapeTracer():
                     event_name = 'event_' + str(i)
                     event_folder_name = create_folder(self.results_folder, event_name, append_date=False)
                     event_base_path = os.path.join(event_folder_name, self.base_name + "_" + event_name)
+                    self.event_base_paths.append(event_base_path)
                 
                     event_speeds = self.speeds[start:end]
                     event_locs = self.locs[start:end]
                     event_sound = self.sound_data[start:end]
                     event_tracking = self.tracking.loc[start:end]
                     post_sound_speeds = self.speeds[event_t0:end]
-                
+
                     event_speed_df = pd.DataFrame((event_speeds, event_locs))
-                    event_speed_df.to_csv(event_base_path + '_speeds.csv')
+                    self.event_speed_dfs.append(event_speed_df)
                     
-                    escape_time, max_speed = analysing.find_escape_stats(post_sound_speeds, self.fps)
+                    escape_time, max_speed = stats.find_escape_stats(post_sound_speeds, 
+                                                                     self.fps, 
+                                                                     self.min_escape_frames,
+                                                                     self.max_escape_window)
+                    
+                    
                     event_stats.append([i, escape_time, max_speed])
                     event_fig, (speed_ax, time_ax) = plt.subplots(1, 2)
                     self.figs.append(event_fig)
@@ -144,8 +174,9 @@ class EscapeTracer():
                                 self.fps, 
                                 self.pcutoff, 
                                 image_file=self.image_file,
-                                schedule=self.schedule, 
-                                show=show)
+                                schedule=self.schedule,
+                                show=False,
+                                close=False)
                     
                     display.two_plots(event_fig, 
                                     speed_ax, 
@@ -157,8 +188,16 @@ class EscapeTracer():
                                     data2_label='Sound (on/off)',
                                     show=show)
                     
+
+                    
+                    if show: plt.show()
+                    
+                    plt.close()
+                                        
                     all_event_speeds.append(event_speeds)
+
             
+
             csv_name = self.base_path + "_event_stats.csv"
             create_csv(event_stats, csv_name)
         
@@ -183,9 +222,12 @@ class EscapeTracer():
         else:
             print("Cannot make escape analysis as no stimulus file loaded")
         
-    def make_pdf_report(self):
+    def save_pdf_report(self):
     
-        save_report(self.figs, self.base_path)
+        if len(self.figs) > 0:
+            save_report(self.figs, self.base_path)
+        else:
+            print("No traces have been made yet")
 
     
     

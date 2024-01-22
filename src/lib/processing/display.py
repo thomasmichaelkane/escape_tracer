@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
-import traja
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 import numpy as np
+
+from ..processing import traja_alt
 
 def get_cmap(n, name='hsv'):
     
@@ -12,19 +14,19 @@ def histogram(vector, color, bins):
     dvector = dvector[np.isfinite(dvector)]
     plt.hist(dvector,color=color,histtype='step',bins=bins)
 
-def trip_grid(tracking, grid_bins=20, show=False):
+def trip_grid(tracking, grid_bins=20, show=False, save=False):
     
-    hist, image = traja.trip_grid(tracking, bins=grid_bins);
+    hist, image = traja_alt.trip_grid(tracking, bins=grid_bins);
     plt.gca().invert_yaxis()
+    fig = plt.gcf()
     
     if show: plt.show()
+    
+    return fig
 
-def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=None, length=None, colormap='jet', offset=(0, 0), show=False):
+def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=None, length=None, colormap='jet', offset=(0, 0), show=False, save=False, close=True):
     ''' Plots poses vs time; pose x vs pose y; histogram of differences and likelihoods.'''
-    
-    plt.rcParams["figure.figsize"] = [16, 8]
-    plt.rcParams["figure.autolayout"] = True
-    
+
     if image_file is not None:
         im = plt.imread(image_file)
         im = ax.imshow(im)
@@ -48,7 +50,9 @@ def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=Non
 
     if show: plt.show()
     
-def sound_plot(video_name, length_seconds, averages, n_highs, bin_sound, threshold, save=True, show=False):
+    if close: plt.close()
+    
+def sound_plot(video_name, length_seconds, averages, n_highs, bin_sound, threshold, show=False, save=True):
     
     fig, axs = plt.subplots(3, 1)
     fig.suptitle('Sound Signal')
@@ -68,29 +72,33 @@ def sound_plot(video_name, length_seconds, averages, n_highs, bin_sound, thresho
     if save: plt.savefig(base_name + '_sound_analysis.jpg', format='jpg')
     
     if show: plt.show()
+    
+    plt.close()
 
-def two_plots(fig, ax1, x, data1, data2, x_label, data1_label, data2_label, v_lim=800, show=False):
+def two_plots(fig, ax1, x, data1, data2, x_label, data1_label, data2_label, speed_lim=800, stim_lim=1.2, show=False, save=False, close=True):
     # Create some mock data
     
     color = 'tab:red'
     ax1.set_xlabel(x_label)
     ax1.set_ylabel(data1_label, color=color)
-    ax1.set_ylim(bottom=0, top=v_lim)
+    ax1.set_ylim(bottom=0, top=speed_lim)
     ax1.plot(x, data1, color=color)
     ax1.tick_params(axis='y', labelcolor=color)
 
+    # if data2 is not None:
     ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
 
     color = 'tab:blue'
     ax2.set_ylabel(data2_label, color=color)  # we already handled the x-label with ax1
-    ax2.set_ylim(bottom=0, top=1.2)
+    ax2.set_ylim(bottom=0, top=stim_lim)
     ax2.plot(x, data2, color=color)
     ax2.tick_params(axis='y', labelcolor=color)
 
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
-    # plt.savefig(base_name + '_speed_plot.jpg', format='jpg')
     
     if show: plt.show()
+    
+    if close: plt.close()
 
 def dlc_plots(tracking, bodyparts2plot, scorer, dim, base_name, legend=False, alphavalue=.2, pcutoff=.5, colormap='jet'):
     ''' Plots poses vs time; pose x vs pose y; histogram of differences and likelihoods.'''
@@ -109,6 +117,7 @@ def dlc_plots(tracking, bodyparts2plot, scorer, dim, base_name, legend=False, al
         cbar = plt.colorbar(sm,ticks=range(len(bodyparts2plot)))
         cbar.set_ticklabels(bodyparts2plot)
     
+    plt.close()
 
 if __name__ == '__main__':
     

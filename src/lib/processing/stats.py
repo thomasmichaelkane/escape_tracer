@@ -1,31 +1,15 @@
 import numpy as np
-import pandas as pd
 from scipy.spatial import distance
 
-from .utils import *
-from .settings import settings
+from ..utils.utils import *
 
-def calculate_speeds(tracking, detections, num_frames, fps, base_path, exit_roi=None):
-
-    # calculate speeds
-    speed_ppf, locs = get_metrics(tracking, detections, num_frames, exit_roi)
-    speed_pps = speed_ppf * fps
+def find_escape_stats(speeds, fps, min_escape_frames, max_escape_window):
     
-    speed_tracking = pd.DataFrame((speed_pps, locs))
-    speed_tracking.to_csv(base_path + '_speeds.csv')
-    
-    return speed_pps, locs
-
-def find_escape_stats(speeds, fps):
-    
-    minmum_escape_frames = settings["minmum_escape_frames"]
-    max_escape_window = settings["max_escape_window"]
-    
-    escape_seq = [0] * minmum_escape_frames
+    escape_seq = [0] * min_escape_frames
     escape_frame = None
 
-    for i in range(0, len(speeds) - minmum_escape_frames + 1):
-        if list(speeds[i: i+minmum_escape_frames]) == escape_seq:
+    for i in range(0, len(speeds) - min_escape_frames + 1):
+        if list(speeds[i: i+min_escape_frames]) == escape_seq:
             escape_frame = i
             break
     
@@ -40,13 +24,12 @@ def find_escape_stats(speeds, fps):
         
     return escape_time, max_escape_speed
 
-def get_metrics(tracking, detected_raw, num_frames, roi):
-    
+def calculate_speeds(tracking, detected_raw, num_frames, fps, speed_cutoff, exit_roi=None):
+
     speeds = np.empty(num_frames)
     locs = np.empty((num_frames, 2))
-    speed_cutoff = settings["speed_cutoff"]
     
-    if roi is not None: x1, x2, y1, y2 = roi
+    if exit_roi is not None: x1, x2, y1, y2 = exit_roi
 
     detected = [index for index, frame_detected in enumerate(detected_raw) if frame_detected]
     for i in range(num_frames):
@@ -67,7 +50,7 @@ def get_metrics(tracking, detected_raw, num_frames, roi):
              
         else:
             
-            if roi is not None:
+            if exit_roi is not None:
                 
                 if current_loc is not None:
                     
@@ -82,4 +65,6 @@ def get_metrics(tracking, detected_raw, num_frames, roi):
         speeds[i] = speed
         locs[i] = recorded_loc
             
-    return speeds, locs
+    speeds_pps = speeds * fps
+    
+    return speeds_pps, locs

@@ -11,14 +11,14 @@ dimensions = {
             "exit_bottom":             100,
 }
 
-settings = {   
+video_settings = {   
             "fps":                     30,
             "pcutoff":                 .5,
             "target_bodypart":         'head base',
             "t_minus":                 5, 
             "event_length":            10,
             "t_plus":                  5,
-            "minmum_escape_frames":    5,
+            "min_escape_frames":       5,
             "max_escape_window":       10,
             "speed_cutoff":            33,
             "view_scale":              0.6,

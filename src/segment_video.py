@@ -26,7 +26,8 @@ Arguments
 import sys
 import os
 
-from lib import video, parse, logging
+from lib.utils import parse, logging
+from lib.processing import video
 
 def main():
     

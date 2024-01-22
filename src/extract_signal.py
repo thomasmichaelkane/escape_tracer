@@ -25,15 +25,15 @@ Arguments
 
 import sys
 
-from lib import parse
-from lib.signal_reader import SignalReader
-from lib.settings import settings, dimensions
+from lib.utils import parse
+from lib.obj.signal_reader import SignalReader
+from lib.settings.settings import video_settings, dimensions
 
 def main():
     
     FILENAME, THRESHOLD, START_IGNORE, END_IGNORE = parse_args()
     
-    sr = SignalReader(FILENAME, dim=dimensions["signal_size"], fps=settings["fps"])
+    sr = SignalReader(FILENAME, dim=dimensions["signal_size"], fps=video_settings["fps"])
     sr.read()
     sr.threshold_signal(THRESHOLD, start_skip=START_IGNORE, end_skip=END_IGNORE)
     sr.save_signal()

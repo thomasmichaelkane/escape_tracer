@@ -25,9 +25,9 @@ Arguments
 
 import sys
 
-from lib import parse
-from lib.escape_tracer import EscapeTracer
-from lib.settings import settings, dimensions
+from lib.utils import parse
+from lib.obj.escape_tracer import EscapeTracer
+from lib.settings.settings import video_settings, dimensions
 
 def main():
     
@@ -35,13 +35,14 @@ def main():
     
     TRACKING_FILE, STIM_FILE = parse.get_file_names(FOLDER)
     
-    et = EscapeTracer(TRACKING_FILE, settings, dimensions)
+    et = EscapeTracer(TRACKING_FILE, video_settings, dimensions)
     et.load_stim_file(STIM_FILE)
-    
-    et.calc_speeds()
-    et.global_displays()
-    et.event_displays()
-    et.output_report()
+    et.load_background_image(video_settings["background_image"])
+    et.increase_fig_size()
+    et.draw_global_traces(show=True)
+    et.draw_event_traces(show=True)
+    et.save_speeds()
+    et.save_pdf_report()
 
 def parse_args():
 

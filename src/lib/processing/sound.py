@@ -1,17 +1,14 @@
-import os
 import numpy as np
 import pandas as pd
 
 def read_sound_file(sound_file, num_frames):
     
-    folder_name, file_name = os.path.split(sound_file)
-    base_name = file_name.removesuffix('_sound.csv')
     sound_tracking = pd.read_csv(sound_file)
     raw_sound = np.array(sound_tracking.to_numpy().flatten(), dtype=bool)
     
     sound = conform_sound(raw_sound, num_frames)
     
-    return sound, folder_name, base_name
+    return sound
 
 def conform_sound(sound, num_frames):
     

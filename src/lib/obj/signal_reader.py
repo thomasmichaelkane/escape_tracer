@@ -3,8 +3,8 @@ import pandas as pd
 import cv2
 from rich import track
 
-from .utils import *
-from . import display
+from ..utils.utils import *
+from ..processing import display
 
 class SignalReader():
     def __init__(self, signal_file, dim, fps):

@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 import pandas as pd
-from .settings import settings, dimensions
+from ..settings.settings import video_settings, dimensions
 from rich.progress import track
 from rich import print as rprint
 from rich import table
@@ -37,8 +37,8 @@ def check_placements(frame, signal_coords, exit_coords):
     cv2.rectangle(frame,(ex0,ey0),(ex1,ey1),(0,255,0),3)
 
     # displaying the image
-    small_frame = cv2.resize(frame, (int(round(frame.shape[1]*settings["view_scale"])), 
-                                     int(round(frame.shape[0]*settings["view_scale"]))))
+    small_frame = cv2.resize(frame, (int(round(frame.shape[1]*video_settings["view_scale"])), 
+                                     int(round(frame.shape[0]*video_settings["view_scale"]))))
     
     cv2.imshow("Confirm? yes [ENTER], exit [ESC], repeat [ANY]", small_frame)
   
@@ -69,8 +69,8 @@ def get_signal(frame):
 def get_user_loc(msg, frame):
   
     # displaying the image
-    small_frame = cv2.resize(frame, (int(round(frame.shape[1]*settings["view_scale"])), 
-                                     int(round(frame.shape[0]*settings["view_scale"]))))
+    small_frame = cv2.resize(frame, (int(round(frame.shape[1]*video_settings["view_scale"])), 
+                                     int(round(frame.shape[0]*video_settings["view_scale"]))))
     
     cv2.imshow(msg, small_frame)
   
@@ -84,8 +84,8 @@ def get_user_loc(msg, frame):
     
     cv2.destroyAllWindows()
     
-    x = int(round(click_x/settings["view_scale"]))
-    y = int(round(click_y/settings["view_scale"]))
+    x = int(round(click_x/video_settings["view_scale"]))
+    y = int(round(click_y/video_settings["view_scale"]))
     
     return (x, y)
 
@@ -148,7 +148,7 @@ def chop_video(folder, video_path, signal_coords, exit_coords):
     dim_arena_x = ax1 - ax0
     dim_arena_y = ay1 - ay0
 
-    fps = settings["fps"]
+    fps = video_settings["fps"]
     
     video = cv2.VideoCapture(video_path)
     n_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
