@@ -61,11 +61,11 @@ class SignalReader():
         sound_name = base_name + '_sound.csv'
         self.sound.to_csv(sound_name, index=False, header=False)
         
-        if save_figure: display.save_sound_plot(self.signal_file)
+        if save_figure: display.save_sound_plot(self.signal_fig, self.signal_file)
         
     def show_signal_thresholding(self):
         
-        display.sound_plot(self.time_seconds,
+        self.signal_fig = display.sound_plot(self.time_seconds,
                            self.n_highs, 
                            self.sound, 
                            self.threshold)

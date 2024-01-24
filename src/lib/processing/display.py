@@ -68,10 +68,12 @@ def sound_plot(length_seconds, n_highs, signal, threshold):
     fig.tight_layout()
     
     plt.show()
+    
+    return fig
 
-def save_sound_plot(video_name):
+def save_sound_plot(fig, video_name):
     signal_name = video_name.removesuffix("_signal.avi") + '_sound_analysis.jpg'
-    plt.savefig(signal_name + '_sound_analysis.jpg', format='jpg')
+    fig.savefig(signal_name + '_sound_analysis.jpg', format='jpg')
     plt.close()
     
 def close_current_plot():
