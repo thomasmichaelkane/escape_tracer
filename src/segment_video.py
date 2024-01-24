@@ -41,11 +41,12 @@ def main():
     except:
         print("processed dir already exists")
     
-    frame = video.get_frame(VIDEO_PATH)
+    blank_frame = video.get_frame(VIDEO_PATH)
     
     key = None
     
     while (key != 13) & (key != 27): # enter/escape key
+        frame = blank_frame.copy()
         signal_coords = video.get_signal(frame)
         exit_coords = video.get_exit(frame)
         logging.display_coords(signal_coords, exit_coords)

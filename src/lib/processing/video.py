@@ -1,11 +1,8 @@
 import os
 import cv2
-import numpy as np
-import pandas as pd
 from ..settings.settings import video_settings, dimensions
 from rich.progress import track
 from rich import print as rprint
-from rich import table
 
 def get_frame(video_name):
     

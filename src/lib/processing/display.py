@@ -52,26 +52,29 @@ def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=Non
     
     if close: plt.close()
     
-def sound_plot(video_name, length_seconds, averages, n_highs, bin_sound, threshold, show=False, save=True):
+def sound_plot(length_seconds, n_highs, signal, threshold):
     
-    fig, axs = plt.subplots(3, 1)
-    fig.suptitle('Sound Signal')
+    fig, axs = plt.subplots(2, 1)
     
-    axs[0].step(length_seconds, averages)
-    axs[0].set_title("Average intensity")
-    axs[0].set_ylim(bottom=0, top=120)
-    axs[1].step(length_seconds, n_highs)
-    axs[1].axhline(y=threshold, color='r', linestyle='-') 
-    axs[1].set_title("Bright pixels")
-    axs[1].set_ylim(bottom=0, top=120)
-    axs[2].step(length_seconds, bin_sound)
-    axs[2].set_title("Sound on/off")
+    axs[0].step(length_seconds, n_highs)
+    axs[0].axhline(y=threshold, color='r', linestyle='-') 
+    axs[0].set_title("Number of bright pixels")
     
-    base_name = video_name.removesuffix("_signal.avi")
+    axs[1].step(length_seconds, signal)
+    axs[1].set_title("Signal")
+    axs[1].set_ylim(bottom=0, top=1.2)
+    axs[1].set_yticks([1.0], ["On"])
     
-    if save: plt.savefig(base_name + '_sound_analysis.jpg', format='jpg')
+    fig.tight_layout()
     
-    if show: plt.show()
+    plt.show()
+
+def save_sound_plot(video_name):
+    signal_name = video_name.removesuffix("_signal.avi") + '_sound_analysis.jpg'
+    plt.savefig(signal_name + '_sound_analysis.jpg', format='jpg')
+    plt.close()
+    
+def close_current_plot():
     
     plt.close()
 

@@ -27,17 +27,15 @@ import sys
 
 from lib.utils import parse
 from lib.obj.signal_reader import SignalReader
-from lib.settings.settings import video_settings, dimensions
+from lib.settings.settings import video_settings, signal_settings, dimensions
 
 def main():
     
-    FILENAME, THRESHOLD, START_IGNORE, END_IGNORE = parse_args()
+    FILENAME, THRESHOLD, START_SKIP, END_SKIP = parse_args()
     
-    sr = SignalReader(FILENAME, dim=dimensions["signal_size"], fps=video_settings["fps"])
-    sr.read()
-    sr.threshold_signal(THRESHOLD, start_skip=START_IGNORE, end_skip=END_IGNORE)
-    sr.save_signal()
-    sr.show_signal_thresholding()
+    sr = SignalReader(FILENAME, dimensions["signal_size"], video_settings["fps"], THRESHOLD, START_SKIP, END_SKIP)
+    sr.threshold_with_user_confirmation()
+    sr.save()
 
 def parse_args():
 
@@ -48,40 +46,40 @@ def parse_args():
     elif len(sys.argv) == 2:
         
         filename = parse.videoname(sys.argv[1])
-        threshold = 40
-        start_ignore = 500
-        end_ignore = 0
+        threshold = signal_settings["default_threshold"]
+        start_skip = signal_settings["default_start_skip"]
+        end_skip = signal_settings["default_end_skip"]
         
     elif len(sys.argv) == 3:
         
         filename = parse.videoname(sys.argv[1])
         threshold = parse.threshold(sys.argv[2])
-        start_ignore = 500
-        end_ignore = 0
+        start_skip = signal_settings["default_start_skip"]
+        end_skip = signal_settings["default_end_skip"]
     
     elif len(sys.argv) == 4:
         
         filename = parse.videoname(sys.argv[1])
         threshold = parse.threshold(sys.argv[2])
-        start_ignore = parse.frame_ignore(sys.argv[3])
-        end_ignore = 0
+        start_skip = parse.frame_skip(sys.argv[3])
+        end_skip = signal_settings["default_end_skip"]
         
     
     elif len(sys.argv) == 5:
         
         filename = parse.videoname(sys.argv[1])
         threshold = parse.threshold(sys.argv[2])
-        start_ignore = parse.frame_ignore(sys.argv[3])
-        end_ignore = parse.frame_ignore(sys.argv[4])
+        start_skip = parse.frame_skip(sys.argv[3])
+        end_skip = parse.frame_skip(sys.argv[4])
             
     else:
         
         raise KeyError("Too many input arguments")
     
-    return filename, threshold, start_ignore, end_ignore
+    return filename, threshold, start_skip, end_skip
 
     # time_seconds, averages, n_highs = sound.read_signal(FILENAME)
-    # bin_sound = sound.get_binary(FILENAME, n_highs, START_IGNORE, END_IGNORE, THRESHOLD)
+    # bin_sound = sound.get_binary(FILENAME, n_highs, START_skip, END_skip, THRESHOLD)
     # display.sound_analysis(FILENAME, time_seconds, averages, n_highs, bin_sound, THRESHOLD, show=True)
 
 main()
