@@ -28,7 +28,7 @@ def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=Non
 
     if image_file is not None:
         im = plt.imread(image_file)
-        im = ax.imshow(im)
+        im = ax.imshow(im, cmap='gray')
         
     total_time = sum(schedule) if schedule is not None else length
     
