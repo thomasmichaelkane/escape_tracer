@@ -1,3 +1,19 @@
+tracking:
+    target_bodypart: head base # must match string in h5 tracking file
+    background_image: images/arena.tif # arena image to be displayed as background on escape plots
+    pcutoff: .5 # probability cutoff for target bodypart detection (0.0-1.0)
+    event:  # timings (in seconds) for analysis of escapes
+        t_minus: 5 # before stim
+        length: 10 # stim length
+        t_plus: 5 # after stim
+    min_escape_frames: 5 # the minimum frames with a speed of zero during the escape window to count as an escape 
+    max_escape_window: 10 # the escape window (in seconds) after stim onset
+    speed_cutoff: 33 # if speed exceeds this value it is assumed as an anomaly and the speed of teh frame before is used
+
+video:
+    fps: 30 # frames per second of video
+    thumbnail_scale: 0.6 # resize factor of video for labelling
+
 dimensions:
     video:
         - 1020 # x (of segmented arena video)
@@ -15,20 +31,7 @@ dimensions:
         - 100 # top (distance from exit xy)
         - 60 # right (distance from exit xy)
         - 100 # bottom (distance from exit xy)
-video:
-    fps: 30 # frames per second of video
-    thumbnail_scale: 0.6 # resize factor of video for labelling
-tracking:
-    target_bodypart: head base # must match string in h5 trackjing file
-    background_image: images/arena.tif # arena image to be displayed as background on escape plots
-    pcutoff: .5 # probability cutoff for target bodypart detection (0.0-1.0)
-    event:  # timings (in seconds) for analysis of escapes
-        t_minus: 5 # before stim
-        length: 10 # stim length
-        t_plus: 5 # after stim
-    min_escape_frames: 5 # the minimum frames with a speed of zero during the escape window to count as an escape 
-    max_escape_window: 10 # the escape window (in seconds) after stim onset
-    speed_cutoff: 33 # if speed exceeds this value it is assumed as an anomaly and the speed of teh frame before is used
+
 signal:
     threshold: 40 # the number of bright frames that determines if the stim is on
     start_frame: 1000 # number of frames at the beginning of the video to default to stim off

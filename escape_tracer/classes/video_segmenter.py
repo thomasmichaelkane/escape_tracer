@@ -1,7 +1,7 @@
 import os
 
-from lib.utils import logging
-from lib.processing import video
+from escape_tracer.utils import logging
+from escape_tracer.processing import video
 
 class VideoSegmenter():
     def __init__(self, video_file, settings):
@@ -19,6 +19,8 @@ class VideoSegmenter():
             print("processed dir already exists")
         
         self.blank_frame = video.get_frame(video_file)
+        
+        print(self.blank_frame)
         
     def segment(self):
         

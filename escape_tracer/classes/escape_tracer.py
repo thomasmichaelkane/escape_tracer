@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from ..processing import display, arena, stats, stim
-from ..utils.utils import *
+from escape_tracer.processing import display, arena, stats, stim
+from escape_tracer.utils import *
 
 class EscapeTracer():
     def __init__(self, tracking_file, settings, save_figs=False):
@@ -25,7 +25,7 @@ class EscapeTracer():
         self.total_time = self.num_frames * frame_time
         self.time = np.arange(self.num_frames) * frame_time
         self.schedule = (self.event["t_minus"], self.event["length"], self.event["t_plus"])
-        self.norm_event_time = np.arange(-self.event["t_minus"], (self.event["length"]+self.event["t_plus"]), frame_time) #############
+        self.norm_event_time = np.arange(-self.event["t_minus"], (self.event["length"]+self.event["t_plus"]), frame_time)
         self.exit_roi = arena.get_exit_roi(settings["dimensions"])
         
         # read tracking data
@@ -45,7 +45,7 @@ class EscapeTracer():
         except:
             pass
         
-        self.results_folder = create_folder(self.analysis_folder, "et_output")
+        self.results_folder = create_folder(self.analysis_folder, "et-output")
         self.base_path = os.path.join(self.results_folder, self.base_name)
         
         # initialise figures list
@@ -84,15 +84,15 @@ class EscapeTracer():
                                                   self.speed_cutoff,
                                                   self.exit_roi)
 
-    def save_speeds(self, suffix='_speeds'):
+    def save_speeds(self, suffix='speeds'):
         
         speed_tracking = pd.DataFrame((self.speeds, self.locs))
-        speed_tracking.to_csv(self.base_path + suffix + '.csv')
+        speed_tracking.to_csv(self.base_path + '_' + suffix + '.csv')
         
         if self.stim_file is not None:
             
             for path, df in zip(self.event_base_paths, self.event_speed_dfs):
-                df.to_csv(path + suffix + '.csv')
+                df.to_csv(path + '-' + suffix + '.csv')
     
     def draw_global_traces(self, show=False):
         
@@ -147,7 +147,7 @@ class EscapeTracer():
                 
                 if end < (self.num_frames - (self.event["t_plus"]*self.fps)):
                     
-                    event_name = 'event_' + str(i)
+                    event_name = 'event-' + str(i)
                     event_folder_name = create_folder(self.results_folder, event_name, append_date=False)
                     event_base_path = os.path.join(event_folder_name, self.base_name + "_" + event_name)
                     self.event_base_paths.append(event_base_path)
@@ -202,7 +202,7 @@ class EscapeTracer():
 
             
 
-            csv_name = self.base_path + "_event_stats.csv"
+            csv_name = self.base_path + "_escape-stats.csv"
             create_csv(event_stats, csv_name)
         
             # average event displays

@@ -1,12 +1,4 @@
 import os
-import yaml
-
-def load_config():
-    
-    with open('config.yaml') as config:
-        settings = yaml.load(config.read(), Loader=yaml.Loader)
-        
-    return settings
 
 def threshold(arg):
     
@@ -31,6 +23,21 @@ def frame_ignore(arg):
     except TypeError as e:
         
         print(e)
+
+def text_file(arg):
+    
+    if arg.endswith(".txt"):
+        
+        try:
+            file = open(arg)
+            file.close()
+            return arg
+        except FileNotFoundError as err:
+            print(err)
+            
+    else:
+        
+        raise NameError("The file should be a .txt file")
 
 def video_file(arg):
     
@@ -89,7 +96,7 @@ def folder(arg):
     
 def get_data_folders(parent_folder):
     
-    data_folders = [os.path.join(parent_folder, folder) for folder in os.listdir(parent_folder) if os.path.isdir(os.path.join(parent_folder, folder))]
+    data_folders = {folder_name: os.path.join(parent_folder, folder_name) for folder_name in os.listdir(parent_folder) if os.path.isdir(os.path.join(parent_folder, folder))}
     
     return data_folders
     

@@ -1,8 +1,6 @@
 import numpy as np
 from scipy.spatial import distance
 
-from ..utils.utils import *
-
 def find_escape_stats(speeds, fps, min_escape_frames, max_escape_window):
     
     escape_seq = [0] * min_escape_frames

@@ -17,7 +17,7 @@ Arguments
 ----------
 --- : str
     -----.
-
+ 
 --- : float
     ----
     
@@ -25,16 +25,14 @@ Arguments
 
 import sys
 
-from lib.obj.video_segmenter import VideoSegmenter
-from lib.utils import parse
+from escape_tracer import VideoSegmenter, config
+from escape_tracer.utils import parse
 
-def main():
+def run():
     
-    SETTINGS = parse.load_config()
+    VIDEO_FILE = parse_args()
     
-    VIDEO_PATH = parse_args()
-    
-    vc = VideoSegmenter(VIDEO_PATH, SETTINGS)
+    vc = VideoSegmenter(VIDEO_FILE, config)
     vc.segment()
     
 def parse_args():
@@ -43,11 +41,12 @@ def parse_args():
         raise KeyError("No file specified")
 
     elif len(sys.argv) == 2:
-        filename = parse.video_file(sys.argv[1])
+        video_file = parse.video_file(sys.argv[1])
                       
     else:
         raise KeyError("Too many input arguments")
     
-    return filename
+    return video_file
 
-main()
+if __name__ == "__main__":
+    run()

@@ -25,21 +25,19 @@ Arguments
 
 import sys
 
-from lib.utils import parse
-from lib.obj.signal_reader import SignalReader
+from escape_tracer.utils import parse
+from escape_tracer import SignalReader, config
 
-def main():
-    
-    SETTINGS = parse.load_config()
+def run():
     
     FILENAME = parse_args()
     
     sr = SignalReader(FILENAME, 
-                      SETTINGS["dimensions"]["signal"], 
-                      SETTINGS["video"]["fps"], 
-                      SETTINGS["signal"]["threshold"], 
-                      SETTINGS["signal"]["start_frame"],
-                      SETTINGS["signal"]["end_frame"])
+                      dim=config["dimensions"]["signal"], 
+                      fps=config["video"]["fps"], 
+                      threshold=config["signal"]["threshold"], 
+                      start_frame=config["signal"]["start_frame"],
+                      end_frame=config["signal"]["end_frame"])
     
     sr.threshold_with_user_confirmation()
     sr.save()
@@ -60,4 +58,4 @@ def parse_args():
     
     return filename
 
-main()
+run()

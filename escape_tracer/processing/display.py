@@ -71,7 +71,7 @@ def stim_plot(length_seconds, n_highs, signal, threshold):
     return fig
 
 def save_stim_plot(fig, video_name):
-    signal_name = video_name.removesuffix("_signal.avi") + '_stim_analysis.jpg'
+    signal_name = video_name.removesuffix("_signal.avi") + '_stim-analysis.jpg'
     fig.savefig(signal_name, format='jpg')
     plt.close()
     

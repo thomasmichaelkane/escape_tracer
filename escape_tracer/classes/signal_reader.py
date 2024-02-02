@@ -3,20 +3,20 @@ import pandas as pd
 import cv2
 from rich.progress import track
 
-from ..utils.utils import *
-from ..processing import display
-from ..utils import logging
+from escape_tracer.processing import display
+from escape_tracer.utils import logging
+from escape_tracer.utils.util_functions import *
 
 class SignalReader():
-    def __init__(self, signal_file, dim, fps, threshold, start_skip, end_skip, brightness_threshold=128):
+    def __init__(self, signal_file, dim, fps, threshold, start_frame, end_frame, brightness_threshold=128):
         
         self.signal_file = signal_file
         self.signal_video = cv2.VideoCapture(self.signal_file)
         self.dim = dim
         self.fps = fps
         self.threshold = threshold
-        self.start_skip = start_skip
-        self.end_skip = end_skip
+        self.start_frame = start_frame
+        self.end_frame = end_frame
         
         self.n_highs = []
         n_frames = int(self.signal_video.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -50,8 +50,8 @@ class SignalReader():
     def threshold_signal(self):
     
         s = pd.Series(self.n_highs)
-        end_frame = s.size - self.end_skip
-        s[:self.start_skip] = 0
+        end_frame = s.size - self.end_frame
+        s[:self.start_frame] = 0
         s[end_frame:] = 0
         self.stim = (s > self.threshold).astype(np.int_)
         
@@ -83,7 +83,7 @@ class SignalReader():
             if is_signal_okay is True:
                 break
             
-            self.threshold, self.start_skip, self.end_skip = logging.new_signal_attributes(self.threshold, self.start_skip, self.end_skip)
+            self.threshold, self.start_frame, self.end_frame = logging.new_signal_attributes(self.threshold, self.start_frame, self.end_frame)
         
             display.close_current_plot()
         

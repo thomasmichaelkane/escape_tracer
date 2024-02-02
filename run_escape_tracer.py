@@ -25,23 +25,23 @@ Arguments
 
 import sys
 
-from lib.utils import parse
-from lib.obj.escape_tracer import EscapeTracer
+from escape_tracer import EscapeTracer, config
+from escape_tracer.utils import parse, load_stim_file
 
-def main():
+def run():
     
-    FOLDER = parse_args()
+    TRACKING_FILE = parse_args()
+    STIM_FILE = load_stim_file(TRACKING_FILE)
     
-    SETTINGS = parse.load_config()
+    et = EscapeTracer(TRACKING_FILE, config)
     
-    TRACKING_FILE, STIM_FILE = parse.get_filenames(FOLDER)
-    
-    et = EscapeTracer(TRACKING_FILE, SETTINGS)
     et.load_stim_file(STIM_FILE)
-    et.load_background_image(SETTINGS["tracking"]["background_image"])
+    et.load_background_image(config["tracking"]["background_image"])
     et.increase_fig_size()
+    
     et.draw_global_traces()
-    et.draw_event_traces() 
+    et.draw_event_traces()
+    
     et.save_speeds()
     et.save_pdf_report()
 
@@ -49,11 +49,11 @@ def parse_args():
 
     if len(sys.argv) == 1:
         
-        raise KeyError("tracking and stim files must be specified")
+        raise KeyError("tracking file must be specified")
     
     elif len(sys.argv) == 2:
         
-        folder = parse.folder(sys.argv[1])
+        folder = parse.h5_file(sys.argv[1])
             
     else:
         
@@ -61,5 +61,5 @@ def parse_args():
     
     return folder
 
-
-main()
+if __name__ == "__main__":
+    run()

@@ -1,8 +1,42 @@
 import os
 import csv
+import yaml
 from datetime import datetime
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
+
+def keep_indexed_folders(data_folders, index_file):
+    
+    with open(index_file) as file:
+        indices = file.readlines()
+    
+    for index in indices:
+        if index in data_folders:
+            data_folders.remove(index)
+            
+    return data_folders
+    
+
+def load_config():
+    
+    with open('config.yaml') as config:
+        settings = yaml.load(config.read(), Loader=yaml.Loader)
+        
+    return settings
+
+def load_stim_file(tracking_file):
+    
+    folder = os.path.dirname(tracking_file)
+
+    all_paths = [os.path.join(folder, file) for file in os.listdir(folder) if os.path.isfile(os.path.join(folder, file))]
+    stim_file = None
+
+    for file in all_paths:
+        
+        if file.endswith("_stim.csv") or file.endswith("_sound.csv"): # sound csv legacy
+            stim_file = file
+    
+    return stim_file
 
 def read_tracking_file(tracking_file):
     
