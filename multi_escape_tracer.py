@@ -42,18 +42,26 @@ def run():
     
     for folder in track(data_folders, description="Analysing tracking data for multiple videos..."):
         
-        processed_folder = os.path.join(folder, "processed")
+        try:
         
-        tracking_file, stim_file = parse.get_filenames(processed_folder)
-        
-        et = EscapeTracer(tracking_file, config)
-        et.load_stim_file(stim_file)
-        et.load_background_image(config["tracking"]["background_image"])
-        et.increase_fig_size()
-        et.draw_global_traces()
-        et.draw_event_traces() 
-        et.save_speeds()
-        et.save_pdf_report()
+            processed_folder = os.path.join(folder, "processed")
+            
+            tracking_file, stim_file = parse.get_filenames(processed_folder)
+            
+            et = EscapeTracer(tracking_file, config)
+            et.load_stim_file(stim_file)
+            et.load_background_image(config["tracking"]["background_image"])
+            et.increase_fig_size()
+            et.draw_global_traces()
+            et.draw_event_traces() 
+            et.save_speeds()
+            et.save_pdf_report()
+            
+            print(f"Successfully processed {folder}")
+            
+        except:
+            
+            print(f"Error with video {folder}")
 
 def parse_args():
 

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import traja_alt
+from escape_tracer.processing import traja_alt
 
 def get_cmap(n, name='hsv'):
     
@@ -23,7 +23,7 @@ def trip_grid(tracking, grid_bins=20, show=False, save=False):
     
     return fig
 
-def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=None, length=None, colormap='jet', offset=(0, 0), show=False, save=False, close=True):
+def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=None, length=None, colormap='jet', offset=(0, 0), show=False, close=True):
     ''' Plots poses vs time; pose x vs pose y; histogram of differences and likelihoods.'''
 
     if image_file is not None:
@@ -51,12 +51,13 @@ def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=Non
     
     if close: plt.close()
     
-def stim_plot(length_seconds, n_highs, signal, threshold):
+def stim_plot(length_seconds, n_highs, signal, threshold, y_limit=True):
     
     fig, axs = plt.subplots(2, 1)
     
     axs[0].step(length_seconds, n_highs)
-    axs[0].axhline(y=threshold, color='r', linestyle='-') 
+    axs[0].axhline(y=threshold, color='r', linestyle='-')
+    if y_limit: axs[0].set_ylim(bottom=0, top=threshold*3)
     axs[0].set_title("Number of bright pixels")
     
     axs[1].step(length_seconds, signal)
@@ -79,7 +80,7 @@ def close_current_plot():
     
     plt.close()
 
-def two_plots(fig, ax1, x, data1, data2, x_label, data1_label, data2_label, speed_lim=800, stim_lim=1.2, show=False, save=False, close=True):
+def two_plots(fig, ax1, x, data1, data2, x_label, data1_label, data2_label, speed_lim=800, stim_lim=1.2, show=False, close=True):
     # Create some mock data
     
     color = 'tab:red'
@@ -104,7 +105,7 @@ def two_plots(fig, ax1, x, data1, data2, x_label, data1_label, data2_label, spee
     
     if close: plt.close()
 
-def dlc_plots(tracking, bodyparts2plot, scorer, dim, base_name, legend=False, alphavalue=.2, pcutoff=.5, colormap='jet'):
+def dlc_plots(tracking, bodyparts2plot, scorer, dim, legend=False, alphavalue=.2, pcutoff=.5, colormap='jet'):
     ''' Plots poses vs time; pose x vs pose y; histogram of differences and likelihoods.'''
     colors = get_cmap(len(bodyparts2plot), name = colormap)
 

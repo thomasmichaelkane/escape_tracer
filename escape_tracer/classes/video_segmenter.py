@@ -20,8 +20,6 @@ class VideoSegmenter():
         
         self.blank_frame = video.get_frame(video_file)
         
-        print(self.blank_frame)
-        
     def segment(self):
         
         key = None
