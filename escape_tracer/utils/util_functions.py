@@ -5,14 +5,18 @@ from datetime import datetime
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
-def keep_indexed_folders(data_folders, index_file):
+def remove_indexed_folders(data_folders, index_file):
     
     with open(index_file) as file:
         indices = file.readlines()
-    
-    for index in indices:
-        if index in data_folders:
-            data_folders.remove(index)
+        indices = [index.strip() for index in indices]
+
+        for index in indices:
+            if index in data_folders.keys():
+
+                data_folders.pop(index)
+                print(f"removed {index} via index file")
+
             
     return data_folders
     

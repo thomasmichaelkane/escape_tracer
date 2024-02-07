@@ -96,13 +96,13 @@ def folder(arg):
     
 def get_data_folders(parent_folder):
     
-    data_folders = {folder_name: os.path.join(parent_folder, folder_name) for folder_name in os.listdir(parent_folder) if os.path.isdir(os.path.join(parent_folder, folder))}
+    data_folders = {folder_name: os.path.join(parent_folder, folder_name) for folder_name in os.listdir(parent_folder) if os.path.isdir(os.path.join(parent_folder, folder_name))}
     
     return data_folders
     
-def get_filenames(folder):
+def get_filenames(parent_folder):
     
-    all_paths = [os.path.join(folder, file) for file in os.listdir(folder) if os.path.isfile(os.path.join(folder, file))]
+    all_paths = [os.path.join(parent_folder, file) for file in os.listdir(parent_folder) if os.path.isfile(os.path.join(parent_folder, file))]
     tracking_file = stim_file = None
 
     for file in all_paths:

@@ -27,7 +27,7 @@ import sys
 import os
 from rich.progress import track
 
-from escape_tracer.utils import parse, keep_indexed_folders
+from escape_tracer.utils import parse, remove_indexed_folders
 from escape_tracer import EscapeTracer, config
 
 def run():
@@ -37,14 +37,14 @@ def run():
     data_folders = parse.get_data_folders(FOLDER)
     
     if INDEX_FILE is not None:
-        
-        data_folders = keep_indexed_folders(data_folders, INDEX_FILE)
-    
-    for folder in track(data_folders, description="Analysing tracking data for multiple videos..."):
+
+        data_folders = remove_indexed_folders(data_folders, INDEX_FILE)
+
+    for folder_name, path in track(data_folders.items(), description="Analysing tracking data for multiple videos..."):
         
         try:
         
-            processed_folder = os.path.join(folder, "processed")
+            processed_folder = os.path.join(path, "processed")
             
             tracking_file, stim_file = parse.get_filenames(processed_folder)
             
@@ -57,11 +57,11 @@ def run():
             et.save_speeds()
             et.save_pdf_report()
             
-            print(f"Successfully processed {folder}")
+            print(f"Successfully processed {folder_name}")
             
         except:
             
-            print(f"Error with video {folder}")
+            print(f"Error with video {folder_name}")
 
 def parse_args():
 
