@@ -9,11 +9,19 @@ def get_frame(video_name):
     
     for _ in range(500):
         
-        _, frame = video.read()
+        ret, frame = video.read()
+        
+        if ret:
+            
+            blank_frame = frame
+            
+        else:
+            
+            break
                 
     video.release()
     
-    return frame
+    return blank_frame
 
 def save_segmentation_tif(folder, video_name, segmentation):
     
@@ -145,7 +153,7 @@ def segment_video(folder, video_path, signal_coords, exit_coords, dimensions, vi
                             video_settings["fps"], 
                             (dim_arena_x, dim_arena_y))
     
-    for _ in track(range(n_frames), description="Segmenting video..."):
+    for i in track(range(n_frames), description="Segmenting video..."):
         
         ret, frame = video.read()
         
@@ -162,8 +170,12 @@ def segment_video(folder, video_path, signal_coords, exit_coords, dimensions, vi
             arena_frame = frame[ay0:ay1, ax0:ax1]
             arena.write(arena_frame)
             
-        else:
+        elif not ret and i < n_frames:
             
+            rprint(f"Error with frame {i} - skipping")
+        
+        else:
+        
             break
 
     video.release()
