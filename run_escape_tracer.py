@@ -25,8 +25,8 @@ Arguments
 
 import sys
 
-from escape_tracer import EscapeTracer, config
-from escape_tracer.utils import parse, load_stim_file
+from escape_tracer import EscapeTracer, config, parse
+from escape_tracer.utils import load_stim_file
 
 def run():
     
