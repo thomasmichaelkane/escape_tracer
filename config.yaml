@@ -36,5 +36,8 @@ signal:
     threshold: 40 # the number of bright frames that determines if the stim is on
     start_frame: 1000 # number of frames at the beginning of the video to default to stim off
     end_frame: 0 # number of frames at the end of the video to default to stim off
+    expected_range: # the expected range of signal length
+        - 9.9 # seconds
+        - 10.1 # seconds
 
 

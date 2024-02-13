@@ -3,12 +3,12 @@ import pandas as pd
 import cv2
 from rich.progress import track
 
-from escape_tracer.processing import display
+from escape_tracer.processing import display, stim
 from escape_tracer.utils import logging
 from escape_tracer.utils.util_functions import *
 
 class SignalReader():
-    def __init__(self, signal_file, dim, fps, threshold, start_frame, end_frame, brightness_threshold=128):
+    def __init__(self, signal_file, dim, fps, threshold, start_frame, end_frame, expected_range, brightness_threshold=128):
         
         self.signal_file = signal_file
         self.signal_video = cv2.VideoCapture(self.signal_file)
@@ -17,6 +17,7 @@ class SignalReader():
         self.threshold = threshold
         self.start_frame = start_frame
         self.end_frame = end_frame
+        self.expected_range = expected_range
         
         self.n_highs = []
         n_frames = int(self.signal_video.get(cv2.CAP_PROP_FRAME_COUNT))

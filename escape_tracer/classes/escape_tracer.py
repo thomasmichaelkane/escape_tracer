@@ -54,6 +54,7 @@ class EscapeTracer():
         self.image_file = None
         self.stim_file = None
         self.stim_data = np.zeros(self.num_frames)
+        self.has_stim_events = False
         
         self.calc_speeds()
         
@@ -65,6 +66,10 @@ class EscapeTracer():
         if self.stim_file is not None:
             self.stim_data = stim.read_stim_file(self.stim_file, self.num_frames)
             self.stim_event_frames = stim.get_stim_events(self.stim_data)
+            
+            if len(self.stim_event_frames) > 0:
+
+                self.has_stim_events = True
             
     def load_background_image(self, image_file):
         
@@ -89,7 +94,7 @@ class EscapeTracer():
         speed_tracking = pd.DataFrame((self.speeds, self.locs))
         speed_tracking.to_csv(self.base_path + '_' + suffix + '.csv')
         
-        if self.stim_file is not None:
+        if self.has_stim_events:
             
             for path, df in zip(self.event_base_paths, self.event_speed_dfs):
                 df.to_csv(path + '-' + suffix + '.csv')
@@ -131,7 +136,7 @@ class EscapeTracer():
         
     def draw_event_traces(self, show=False):
         
-        if self.stim_file is not None:
+        if self.has_stim_events:
         
             all_event_speeds = []
             event_stats = []
@@ -224,7 +229,7 @@ class EscapeTracer():
             plt.close()
             
         else:
-            print("Cannot make escape analysis as no stimulus file loaded")
+            print("Cannot analyse escapes as there were no stimulus events")
         
     def save_pdf_report(self):
     

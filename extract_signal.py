@@ -37,7 +37,8 @@ def run():
                       fps=config["video"]["fps"], 
                       threshold=config["signal"]["threshold"], 
                       start_frame=config["signal"]["start_frame"],
-                      end_frame=config["signal"]["end_frame"])
+                      end_frame=config["signal"]["end_frame"],
+                      expected_range=config["signal"]["expected_range"])
     
     sr.threshold_with_user_confirmation()
     sr.save()
