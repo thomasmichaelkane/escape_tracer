@@ -27,7 +27,7 @@ import sys
 import os
 from rich.progress import track
 
-from escape_tracer.utils import parse, remove_indexed_folders
+from escape_tracer.utils import parse, keep_indexed_folders
 from escape_tracer import EscapeTracer, config
 
 def run():
@@ -38,7 +38,7 @@ def run():
     
     if INDEX_FILE is not None:
 
-        data_folders = remove_indexed_folders(data_folders, INDEX_FILE)
+        data_folders = keep_indexed_folders(data_folders, INDEX_FILE)
 
     for folder_name, path in track(data_folders.items(), description="Analysing tracking data for multiple videos..."):
         
