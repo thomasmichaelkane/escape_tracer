@@ -14,7 +14,9 @@ def keep_indexed_folders(data_folders, index_file):
 
     for key in keys_to_remove:
         data_folders.pop(key)
-        print(f"Removed {key} not in index file")
+        
+    for key in data_folders.keys():
+        print(f"Analysing {key}")
 
     return data_folders
     

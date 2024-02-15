@@ -1,5 +1,6 @@
 import os
 import csv
+import numpy as np
 
 def read_event_data(data_folder_path, data_folder_name):
     
@@ -29,6 +30,10 @@ def read_event_data(data_folder_path, data_folder_name):
             speeds_dict[event_name] = speeds
             locs_dict[event_name] = locs
             
+    speeds_average = [np.mean(event_speeds) for event_speeds in speeds_dict.items()]
+        
+        
+      
     return speeds_dict, locs_dict
 
 def write_collated_data(path, data):

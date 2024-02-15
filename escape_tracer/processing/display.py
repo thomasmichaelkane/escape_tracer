@@ -35,17 +35,24 @@ def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=Non
     colors = get_cmap(total_time*fps, name = colormap)
 
     Index = tracking['likelihood'].values > pcutoff
-    x = tracking['x'].values[Index] - offset[0]
-    y = tracking['y'].values[Index] - offset[1]
+    x = tracking['x'].values[Index]
+    y = tracking['y'].values[Index]
     colors = [i/fps for i, x in enumerate(Index) if x]
+    
+    print(tracking['x'].values[150])
 
     plt.scatter(x, y, c=colors, cmap='viridis', s=5, vmin=0, vmax=total_time)   # 'viridis' is one of the available colormaps
     colorbar = plt.colorbar()
     colorbar.set_label('Time (s)')  # Set the label for the colorbar
     
+    
     if schedule is not None:
-        light_on_frame = schedule[0]*fps
-        plt.scatter(x[light_on_frame],y[light_on_frame],c='red', s=50, marker='x', label='stim on')
+        
+        stim_frame = schedule[0]*fps
+    
+        if tracking['likelihood'].values[stim_frame] > pcutoff:
+       
+            plt.scatter(tracking['x'].values[stim_frame],tracking['y'].values[stim_frame],c='red', s=50, marker='x', label='stim on')
 
     if show: plt.show()
     
