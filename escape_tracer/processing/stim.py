@@ -40,4 +40,4 @@ def get_stim_events(stim):
                 stim_event_frames.append(index)
             prev_value = value
             
-    return stim_event_frames 
+    return stim_event_frames
