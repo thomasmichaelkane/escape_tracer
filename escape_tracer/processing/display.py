@@ -1,4 +1,6 @@
-import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib import pyplot as plt
+matplotlib.use('Agg')
 import numpy as np
 
 from escape_tracer.processing import traja_alt
