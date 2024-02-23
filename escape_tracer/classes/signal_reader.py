@@ -70,7 +70,7 @@ class SignalReader():
                            self.n_highs, 
                            self.stim, 
                            self.threshold)
-        
+         
     def threshold_with_user_confirmation(self):
         
         while True:
@@ -87,6 +87,33 @@ class SignalReader():
             self.threshold, self.start_frame, self.end_frame = logging.new_signal_attributes(self.threshold, self.start_frame, self.end_frame)
         
             display.close_current_plot()
+            
+        all_signals_valid = logging.ask_all_signals_valid()
+        
+        if not all_signals_valid:
+            
+            self.remove_false_signals()
+            
+    def remove_false_signals(self):
+        
+        while True:
+        
+            stim_events = stim.get_stim_events(self.stim)
+            
+            removal_id = logging.ask_signal_removal_id(len(stim_events))
+            
+            removal_start_frame = stim_events[removal_id]
+            removal_end_frame = int(round(removal_start_frame+(self.expected_range[1]*self.fps)))
+            self.stim[removal_start_frame:removal_end_frame] = 0
+            
+            self.show_signal_thresholding()
+            
+            all_signals_valid = logging.ask_all_signals_valid()
+            
+            if all_signals_valid:
+                break
+            
+            
         
         
         

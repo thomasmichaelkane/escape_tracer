@@ -25,16 +25,30 @@ def display_coords(signalc, exitc):
     
 def ask_signal_confirmation():
     
-    is_signal_okay = Confirm.ask("Was signal read succesfully?")
+    is_signal_okay = Confirm.ask("Was signal thresholded succesfully?")
     
     return is_signal_okay
+
+def ask_all_signals_valid():
+    
+    all_signals_valid = Confirm.ask("Were all signals valid?")
+    
+    return all_signals_valid
     
 def new_signal_attributes(old_threshold, old_start_skip, old_end_skip):
     
     rprint("Previous attributes: threshold: {}, start_skip: {}, end_skip: {}".format(old_threshold, old_start_skip, old_end_skip))
 
     new_threshold = IntPrompt.ask("Enter new threshold", default=old_threshold)
-    new_start_skip = IntPrompt.ask("Enter new start_skip", default=old_start_skip)
-    new_end_skip = IntPrompt.ask("Enter new end_skip", default=old_end_skip)
+    new_start_skip = IntPrompt.ask("Enter new start frames to skip", default=old_start_skip)
+    new_end_skip = IntPrompt.ask("Enter new end frames to skip", default=old_end_skip)
     
     return new_threshold, new_start_skip, new_end_skip
+
+def ask_signal_removal_id(num_stim_events):
+    
+    signal_ids = [str(e+1) for e in range(num_stim_events)]
+
+    removal_id = IntPrompt.ask("Please select a signal to remove", choices=signal_ids) - 1
+
+    return removal_id
