@@ -12,7 +12,11 @@ def find_escape_stats(speeds, fps, min_escape_frames, max_escape_window):
             break
     
     escape_time = float(escape_frame)/fps
-    max_escape_speed = max(speeds[0:escape_frame])
+    
+    try:
+        max_escape_speed = max(speeds[0:escape_frame])
+    except ValueError:
+        max_escape_speed = None
         
     return escape_time, max_escape_speed
 

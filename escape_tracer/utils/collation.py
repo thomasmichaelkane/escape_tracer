@@ -2,6 +2,15 @@ import os
 import csv
 import numpy as np
 
+def check_for_events(data_folder_path):
+    
+    analysis_folder = os.path.join(data_folder_path, "analysis")
+    et_output_folder = os.path.join(analysis_folder, os.listdir(analysis_folder)[0])
+    
+    files_list = os.listdir(et_output_folder)
+    
+    return any("escape-stats.csv" in file for file in files_list)
+
 def read_event_data(data_folder_path, data_folder_name):
     
     analysis_folder = os.path.join(data_folder_path, "analysis")

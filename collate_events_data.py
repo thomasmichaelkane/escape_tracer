@@ -26,20 +26,26 @@ def run():
 
     for folder_name, path in track(data_folders.items(), description="Collating events data..."):
         
-        try:
+        if collation.check_for_events(path):
         
-            meta, speeds, locs, average_speeds = collation.read_event_data(path, folder_name)
+            try:
+
+                meta, speeds, locs, average_speeds = collation.read_event_data(path, folder_name)
+                
+                meta_data.update(meta)
+                speeds_data.update(speeds)
+                locs_data.update(locs)
+                averages_data[folder_name] = average_speeds
+                
+                print(f"Successfully collated {folder_name}")
+                
+            except:
+                
+                print(f"Error with {folder_name}")
+                
+        else:
             
-            meta_data.update(meta)
-            speeds_data.update(speeds)
-            locs_data.update(locs)
-            averages_data[folder_name] = average_speeds
-            
-            print(f"Successfully collated {folder_name}")
-            
-        except:
-            
-            print(f"Error with dataset {folder_name}")
+            print(f"No events for {folder_name}")
         
         collated_meta_path = os.path.join(output_folder, "collated_escape-stats.csv")
         collation.write_collated_data(collated_meta_path, meta_data)
