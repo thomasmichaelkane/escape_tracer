@@ -39,8 +39,6 @@ def time_plot_on_image(ax, tracking, fps, pcutoff, image_file=None, schedule=Non
     y = tracking['y'].values[Index]
     colors = [i/fps for i, x in enumerate(Index) if x]
     
-    print(tracking['x'].values[150])
-
     plt.scatter(x, y, c=colors, cmap='viridis', s=5, vmin=0, vmax=total_time)   # 'viridis' is one of the available colormaps
     colorbar = plt.colorbar()
     colorbar.set_label('Time (s)')  # Set the label for the colorbar

@@ -171,8 +171,7 @@ class EscapeTracer():
                                                                      self.min_escape_frames,
                                                                      self.max_escape_window)
                     
-                    
-                    event_stats.append([i, escape_time, max_speed])
+                    event_stats.append([i, escape_time, max_speed, event_locs[self.event["t_minus"]*self.fps]])
                     event_fig, (speed_ax, time_ax) = plt.subplots(1, 2)
                     self.figs.append(event_fig)
                     
@@ -196,8 +195,6 @@ class EscapeTracer():
                                     data1_label='Mouse Velocity (pix/s)', 
                                     data2_label='stim (on/off)',
                                     show=show)
-                    
-
                     
                     if show: plt.show()
                     

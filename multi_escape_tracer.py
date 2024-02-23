@@ -39,6 +39,10 @@ def run():
     if INDEX_FILE is not None:
 
         data_folders = keep_indexed_folders(data_folders, INDEX_FILE)
+        
+    else:
+        
+        print("Loading all folders...")
 
     for folder_name, path in track(data_folders.items(), description="Analysing tracking data for multiple videos..."):
         

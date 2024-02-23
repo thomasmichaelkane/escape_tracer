@@ -9,21 +9,31 @@ def run():
     FOLDER, INDEX_FILE = parse_args()
     
     data_folders = parse.get_data_folders(FOLDER)
+    meta_data = {}
     speeds_data = {}
     locs_data = {}
+    averages_data = {}
     
     if INDEX_FILE is not None:
 
         data_folders = keep_indexed_folders(data_folders, INDEX_FILE)
+        output_folder = os.path.dirname(INDEX_FILE)
+        
+    else:
+        
+        output_folder = FOLDER
+        print("Loading all folders...")
 
     for folder_name, path in track(data_folders.items(), description="Collating events data..."):
         
         try:
         
-            speeds, locs = collation.read_event_data(path, folder_name)
+            meta, speeds, locs, average_speeds = collation.read_event_data(path, folder_name)
             
+            meta_data.update(meta)
             speeds_data.update(speeds)
             locs_data.update(locs)
+            averages_data[folder_name] = average_speeds
             
             print(f"Successfully collated {folder_name}")
             
@@ -31,12 +41,18 @@ def run():
             
             print(f"Error with dataset {folder_name}")
         
-        collated_speeds_path = os.path.join(FOLDER, "collated_speeds.csv")
-        # collated_locs_path = os.path.join(FOLDER, "collated_locs.csv")
+        collated_meta_path = os.path.join(output_folder, "collated_escape-stats.csv")
+        collation.write_collated_data(collated_meta_path, meta_data)
         
+        collated_speeds_path = os.path.join(output_folder, "collated_speeds.csv")
         collation.write_collated_data(collated_speeds_path, speeds_data)
-        # collation.write_collated_data(collated_locs_path, locs_data)
-
+        
+        collated_locs_path = os.path.join(output_folder, "collated_locs.csv")
+        collation.write_collated_data(collated_locs_path, locs_data)
+        
+        collated_averages_path = os.path.join(output_folder, "collated_average-speeds.csv")
+        collation.write_collated_data(collated_averages_path, averages_data)
+        
 def parse_args():
 
     if len(sys.argv) == 1:

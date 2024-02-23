@@ -16,7 +16,7 @@ def keep_indexed_folders(data_folders, index_file):
         data_folders.pop(key)
         
     for key in data_folders.keys():
-        print(f"Analysing {key}")
+        print(f"Loading {key} via index file")
 
     return data_folders
     

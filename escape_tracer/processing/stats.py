@@ -4,21 +4,15 @@ from scipy.spatial import distance
 def find_escape_stats(speeds, fps, min_escape_frames, max_escape_window):
     
     escape_seq = [0] * min_escape_frames
-    escape_frame = None
+    escape_frame = len(speeds)
 
     for i in range(0, len(speeds) - min_escape_frames + 1):
         if list(speeds[i: i+min_escape_frames]) == escape_seq:
             escape_frame = i
             break
     
-    if escape_frame is not None:
-        escape_time = float(escape_frame)/fps
-        if escape_time < max_escape_window:
-            max_escape_speed = max(speeds)
-        else:
-            escape_time = max_escape_speed = None
-    else:
-        escape_time = max_escape_speed = None
+    escape_time = float(escape_frame)/fps
+    max_escape_speed = max(speeds[0:escape_frame])
         
     return escape_time, max_escape_speed
 
